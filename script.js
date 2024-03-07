@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	3869, 2965, 1477, 3687, 554, 2506, 3870, 3763, 4575, 529, 4054, 3626, 3727, 3010, 566, 2616, 3597, 1092, 3605, 2242, 
 	1974, 1207, 4010, 3769, 3944, 2989, 3770, 2228, 2445, 656, 2575, 1688, 681, 3364, 99, 3511, 752, 3246, 2106, 1468, 4837,
 	2799, 931, 3051, 4011, 4596, 3036, 3627, 1478, 3946, 3525, 1949, 3776, 3427, 3224, 3967, 1486, 4602, 751, 452, 2767, 1095, 
-	712, 2879, 481, 3628, 3965, ] 
+	712, 2879, ] 
         // ... Adicione mais listas conforme necessário
     ];
 
@@ -132,45 +132,72 @@ if (landStates[i]) {
  	   scrollToBottom();
 }
 
-    function shuffleList() {
-        const pixelList = document.getElementById("pixelList");
-        const listItems = Array.from(pixelList.children);
-        listItems.forEach(item => pixelList.removeChild(item));
+function shuffleList() {
+    const pixelList = document.getElementById("pixelList");
+    const listItems = Array.from(pixelList.children);
+    listItems.forEach(item => pixelList.removeChild(item));
 
-        const shuffledLinks = listItems.map(item => item.querySelector("a"))
-            .sort(() => Math.random() - 0.5);
+    const shuffledLinks = listItems.map(item => item.querySelector("a"))
+        .sort(() => Math.random() - 0.5);
 
-        shuffledLinks.forEach(link => {
-            const listItem = document.createElement("li");
-            listItem.appendChild(link);
-            pixelList.appendChild(listItem);
+    shuffledLinks.forEach(link => {
+        const listItem = document.createElement("li");
+        listItem.appendChild(link);
+        pixelList.appendChild(listItem);
+    });
+
+    // Reaplicar estados das lands
+    updateLandStates();
+
+    // Reassociar eventos do mouse
+    applyMouseEvents();
+}
+
+function applyMouseEvents() {
+    const lockIcons = document.querySelectorAll(".no-blur");
+
+    lockIcons.forEach(lockIcon => {
+        const tooltip = lockIcon.nextElementSibling;
+
+        // Adicionar evento de mouseover para exibir a dica de ferramenta
+        lockIcon.addEventListener("mouseenter", function (event) {
+            const lockIconRect = lockIcon.getBoundingClientRect();
+            tooltip.style.display = "block";
+            tooltip.style.top = `${lockIconRect.top - tooltip.offsetHeight}px`;
+            tooltip.style.left = `${lockIconRect.left + lockIconRect.width}px`;
         });
 
-        // Reaplicar estados das lands
-        updateLandStates();
-    }
+        // Adicionar evento de mouseout para ocultar a dica de ferramenta
+        lockIcon.addEventListener("mouseleave", function () {
+            tooltip.style.display = "none";
+        });
+    });
+}
 
-    function reverseList() {
-        const pixelList = document.getElementById("pixelList");
-        const listItems = Array.from(pixelList.children);
-        listItems.forEach(item => pixelList.removeChild(item));
+function reverseList() {
+    const pixelList = document.getElementById("pixelList");
+    const listItems = Array.from(pixelList.children);
+    listItems.forEach(item => pixelList.removeChild(item));
 
-        const sortedLinks = listItems.map(item => item.querySelector("a"))
-            .sort((a, b) => {
-                const numA = getLandNumber(a.href);
-                const numB = getLandNumber(b.href);
-                return reverseOrder ? numB - numA : numA - numB;
-            });
-
-        sortedLinks.forEach(link => {
-            const listItem = document.createElement("li");
-            listItem.appendChild(link);
-            pixelList.appendChild(listItem);
+    const sortedLinks = listItems.map(item => item.querySelector("a"))
+        .sort((a, b) => {
+            const numA = getLandNumber(a.href);
+            const numB = getLandNumber(b.href);
+            return reverseOrder ? numA - numB : numB - numA;
         });
 
-        // Reaplicar estados das lands
-        updateLandStates();
-    }
+    sortedLinks.forEach(link => {
+        const listItem = document.createElement("li");
+        listItem.appendChild(link);
+        pixelList.appendChild(listItem);
+    });
+
+    // Inverta o estado de reverseOrder
+    reverseOrder = !reverseOrder;
+
+    // Reaplicar estados das lands
+    updateLandStates();
+}
 
     function applyLandStates() {
         const pixelList = document.getElementById("pixelList");
@@ -225,11 +252,32 @@ if (landStates[i]) {
         }
     }
 
-    function updateLandStates() {
-        for (let i = 1; i <= 5000; i++) {
-            landStates[i] = isLandBlacklisted(i);
-        }
-        applyLandStates();
+function updateLandStates() {
+    for (let i = 1; i <= 5000; i++) {
+        landStates[i] = isLandBlacklisted(i);
+    }
+    applyLandStates();
+    applyMouseEvents(); // Adicionar eventos do mouse após atualizar os estados
+}
+    function applyMouseEvents() {
+        const lockIcons = document.querySelectorAll(".no-blur");
+
+        lockIcons.forEach(lockIcon => {
+            const tooltip = lockIcon.nextElementSibling;
+
+            // Adicionar evento de mouseover para exibir a dica de ferramenta
+            lockIcon.addEventListener("mouseenter", function (event) {
+                const lockIconRect = lockIcon.getBoundingClientRect();
+                tooltip.style.display = "block";
+                tooltip.style.top = `${lockIconRect.top - tooltip.offsetHeight}px`;
+                tooltip.style.left = `${lockIconRect.left + lockIconRect.width}px`;
+            });
+
+            // Adicionar evento de mouseout para ocultar a dica de ferramenta
+            lockIcon.addEventListener("mouseleave", function () {
+                tooltip.style.display = "none";
+            });
+        });
     }
 
     // Associar funções aos botões
@@ -239,21 +287,27 @@ if (landStates[i]) {
     document.getElementById("shuffleBtn").addEventListener("click", shuffleList);
     document.getElementById("reverseBtn").addEventListener("click", reverseList);
 
-    // Adicionar botão para forçar o reset
-    const resetBtn = document.getElementById("resetBtn");
-    resetBtn.addEventListener("click", function () {
-        const pixelList = document.getElementById("pixelList");
-        const listItems = Array.from(pixelList.children);
+	// Adicionar botão para forçar o reset
+	const resetBtn = document.getElementById("resetBtn");
+	resetBtn.addEventListener("click", function () {
+	   const pixelList = document.getElementById("pixelList");
+ 	   const listItems = Array.from(pixelList.children);
 
-        listItems.forEach(item => {
-            const link = item.querySelector("a");
-            link.classList.remove("opened"); // Remove a classe "opened" ao resetar
-        });
+  	  listItems.forEach(item => {
+   	     const link = item.querySelector("a");
+   	     link.classList.remove("opened"); // Remove a classe "opened" ao resetar
+   	     const lockIcon = item.querySelector(".no-blur");
+   	     const tooltip = lockIcon.nextElementSibling;
 
-        reverseOrder = false;
-        visitedLands = new Set();
-        updateLandStates(); // Atualize os estados após o reset
-    });
+   	     // Remover o cadeado e a dica de ferramenta
+  	      item.removeChild(lockIcon);
+  	      item.removeChild(tooltip);
+ 	   });
+
+ 	   reverseOrder = false;
+ 	   visitedLands.clear(); // Limpar todas as lands visitadas
+	    updateLandStates(); // Atualize os estados após o reset
+	});
 
     function openLinkInNewTab(link) {
         visitedLands.add(link.href);
