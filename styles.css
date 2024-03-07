@@ -68,7 +68,7 @@ ul::-webkit-scrollbar-thumb:hover {
 /* Estilo dos itens da lista */
 li {
     margin: 5px auto;
-    width: 130px;
+    width: 120px;
     box-sizing: border-box;
     display: inline-flex;
     justify-content: center;
