@@ -18,7 +18,7 @@ body {
     margin: 0 auto;
     border: 2px solid rgba(173, 216, 230, 0.8);
     border-radius: 5px;
-    padding: 25px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -26,7 +26,7 @@ body {
 }
 
 h1 {
-    margin-bottom: 30px;
+    margin-bottom: -10px;
 }
 
 /* Estilo da lista de lands */
@@ -68,7 +68,7 @@ ul::-webkit-scrollbar-thumb:hover {
 /* Estilo dos itens da lista */
 li {
     margin: 5px auto;
-    width: 120px;
+    width: 130px;
     box-sizing: border-box;
     display: inline-flex;
     justify-content: center;
